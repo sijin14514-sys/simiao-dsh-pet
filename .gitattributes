@@ -1,0 +1,15 @@
+# 统一换行：仓库内一律 LF；shell / mjs / md / json 在 Unix 上必须能直接跑
+* text=auto eol=lf
+*.sh text eol=lf
+*.mjs text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+
+# Windows 脚本保持 CRLF（PowerShell 都认，但 CRLF 在记事本里更友好）
+*.ps1 text eol=crlf
+
+# 二进制，别做任何转换
+*.png binary
+*.webm binary
+*.mp4 binary
