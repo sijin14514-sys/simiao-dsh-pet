@@ -1,0 +1,5 @@
+临时/
+日志/
+发布/
+node_modules/
+*.log

@@ -1,0 +1,95 @@
+{
+  "pets": [
+    {
+      "id": "simiao",
+      "name": "肆喵",
+      "size": 380,
+      "balanceEnabled": true,
+      "display": "web",
+      "position": {
+        "corner": "bottom-right",
+        "marginX": 24,
+        "marginY": 24
+      }
+    }
+  ],
+  "animations": {
+    "idle": [
+      "待机呼吸-AI"
+    ],
+    "turn": [],
+    "drag": [
+      "被鼠标拖拽悬空反抗-AI"
+    ],
+    "clicks": [
+      "点击回应-开心跃动-AI",
+      "被吓一跳-AI",
+      "生气跺脚-AI",
+      "鼓掌庆祝-AI",
+      "鞠躬-AI"
+    ],
+    "moves": {
+      "default": {
+        "minDist": 60,
+        "maxDist": 240,
+        "margin": 20,
+        "leadSec": 2,
+        "tailSec": 2
+      },
+      "actions": [
+        {
+          "name": "小碎步走路-AI"
+        }
+      ]
+    },
+    "categories": [
+      {
+        "id": "小动作",
+        "weight": 12,
+        "actions": [
+          "左右张望-AI",
+          "招手打招呼-AI",
+          "摇头晃脑-AI",
+          "冒爱心-AI",
+          "原地转圈-AI"
+        ]
+      },
+      {
+        "id": "待机小动作",
+        "weight": 10,
+        "actions": [
+          "打瞌睡-AI",
+          "抱着枕头睡觉-AI",
+          "看书-AI",
+          "擦汗-AI",
+          "戴耳机听歌-AI"
+        ]
+      },
+      {
+        "id": "吃喝",
+        "weight": 8,
+        "actions": [
+          "吃零食-AI"
+        ]
+      }
+    ],
+    "events": {
+      "balance": [
+        "余额-钱袋如常-AI",
+        "余额-钱袋如常-AI",
+        "余额-钱袋如常-AI",
+        "余额-钱袋如常-AI",
+        "余额-钱袋如常-AI",
+        "余额-钱袋如常-AI"
+      ]
+    }
+  },
+  "animationWeights": {
+    "idle": 65,
+    "turn": 0,
+    "move": 5
+  },
+  "eventsRefreshSec": {
+    "balance": 1800
+  }
+}
