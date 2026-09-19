@@ -64,7 +64,7 @@ sh ./pet-pack/install.sh
 
 ```powershell
 # 高级用法（一般用不到）
-powershell -NoProfile -ExecutionPolicy Bypass -File .\standalone-desktop\安装肆喵.ps1 -SkipAutostart -NoLaunch
+powershell -NoProfile -ExecutionPolicy Bypass -File .\standalone-desktop\install.ps1 -SkipAutostart -NoLaunch
 ```
 
 - 📖 **图文安装教程 + 常见问题**：[`standalone-desktop/安装教程.md`](standalone-desktop/安装教程.md)

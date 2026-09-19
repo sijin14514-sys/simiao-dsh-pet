@@ -1,7 +1,14 @@
 @echo off
+rem Simiao desktop pet - one click installer (Windows)
+rem ASCII-only on purpose: mid-file chcp plus non-ASCII bytes inside a batch
+rem file is a known source of cmd parsing bugs. All Chinese text lives in install.ps1.
 chcp 65001 >nul
-title 肆喵 · 一键安装
+title Simiao Pet Installer
 echo.
-echo   正在启动安装程序，请稍候…
+echo   ==========================================
+echo    Simiao Pet - One Click Installer
+echo   ==========================================
 echo.
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0安装肆喵.ps1"
+echo   Starting, please wait (do not close this window)...
+echo.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0install.ps1"

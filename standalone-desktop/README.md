@@ -36,7 +36,7 @@ sh install.sh
 只装角色、不动开机自启、不启动程序等：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\安装肆喵.ps1 -SkipAutostart -NoLaunch
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -SkipAutostart -NoLaunch
 # 参数：-SkipAppInstall（不检查/不装载体程序） -SkipAutostart -NoLaunch -TestDownload（只测下载通道）
 ```
 
