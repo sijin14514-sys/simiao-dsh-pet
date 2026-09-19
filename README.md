@@ -44,27 +44,40 @@ sh ./pet-pack/install.sh
 
 刷新 DSH 页面即可看到肆喵。也可手动把 `simiao-config.json` 与 `simiao-animation/` 放进 `$DSH_HOME/dsh-pet/pet/`。
 
-### 方式 B：**脱离 DSH**，独立跑在桌面上
+### 方式 B：**脱离 DSH**，独立跑在桌面上（傻瓜版）
 
 由 [dsh-pet-indesktop](https://github.com/MerZlin/dsh-pet-indesktop)（Python + PySide6 的独立桌宠）承载，
 **完全不需要 DSH**。两个项目共用同一套素材规范（640×360 / 24fps / VP9-alpha / 脚底 y=330），所以是零改代码搬运。
 
+**Windows：解压后双击 `一键安装-肆喵.cmd`，剩下全自动** ——
+
+| 自动完成 | 说明 |
+|---|---|
+| ① 检查载体程序 | 没装就**自动从 GitHub 下载并静默安装**（约 140MB） |
+| ② 生成配置 | 自动启动一次程序 |
+| ③ 装角色 | 20 段动画拷进程序的角色目录 |
+| ④ 切角色 | 当前角色改为「肆喵」（写无 BOM 的 UTF-8） |
+| ⑤ 开机自启 | 写注册表项（可在右键菜单关闭） |
+| ⑥ 启动桌宠 | 桌面上出现肆喵 |
+
+不需要命令行知识、不需要管理员权限、不需要 DSH / Node。
+
 ```powershell
-# ① 先装 dsh-pet-indesktop：https://github.com/MerZlin/dsh-pet-indesktop/releases
-# ② 再跑本仓库的脚本（装角色 + 把当前角色切为肆喵）
-powershell -NoProfile -ExecutionPolicy Bypass -File .\standalone-desktop\install-standalone.ps1
+# 高级用法（一般用不到）
+powershell -NoProfile -ExecutionPolicy Bypass -File .\standalone-desktop\安装肆喵.ps1 -SkipAutostart -NoLaunch
 ```
 
-详见 [`standalone-desktop/README.md`](standalone-desktop/README.md)（各平台目录、动作映射、实测结果）。
+- 📖 **图文安装教程 + 常见问题**：[`standalone-desktop/安装教程.md`](standalone-desktop/安装教程.md)
+- **macOS / Linux**：装好载体程序并运行过一次后，`sh standalone-desktop/install.sh`
 
 > 已实测通过（Windows / v4.2.0）：启动日志 `当前形象: simiao`、`素材加载完成：simiao 20 段动画`，
-> 桌面上出现肆喵并播放待机呼吸，**全程不依赖 DSH**。
+> 桌面上出现肆喵并播放待机呼吸，**全程不依赖 DSH**；自动下载与静默安装两条路径均已实测。
 
 ## 🧭 仓库结构
 
 ```
 ├─ pet-pack/              ← 装进 DSH 用（配置 + 20 段 webm + 安装脚本 + 预览图）
-├─ standalone-desktop/    ← 脱离 DSH 用（外部角色目录 + 一键安装脚本 + 说明）
+├─ standalone-desktop/    ← 脱离 DSH 用（一键安装器 + 安装教程 + 外部角色目录 + install.sh）
 ├─ tools/                 ← 制作与部署用到的脚本（可直接复用，路径已改成相对仓库根）
 │   └─ README.md          ← 每个脚本干什么
 ├─ docs/                  ← 方法论文档（怎么做出来的、踩过哪些坑）

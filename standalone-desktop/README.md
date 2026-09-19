@@ -5,24 +5,46 @@
 
 > 同样的 20 段素材，也支持装在 DSH 的 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet) 插件里（见仓库主 README）。
 
-## 一、安装（两步）
+## 一、安装（傻瓜版：双击一个文件）
 
-```powershell
-# ① 先装 dsh-pet-indesktop（安装版或绿色版都行）
-#    https://github.com/MerZlin/dsh-pet-indesktop/releases
-#    选 dsh-pet-standalone-webm-setup.exe（安装版，免管理员）或 ...-portable.zip（绿色版）
+**Windows**：解压本包 → **双击「一键安装-肆喵.cmd」** → 等它跑完 → 桌面上就有肆喵了。
 
-# ② 运行本包的一键脚本，把肆喵装进去并切换为当前角色
-powershell -NoProfile -ExecutionPolicy Bypass -File .\install-standalone.ps1
+它全程自动（不需要命令行知识、不需要管理员权限）：
+
+| 步骤 | 自动做的事 |
+|---|---|
+| ① | 检查有没有装独立桌宠程序 —— **没装就从 GitHub 自动下载并静默安装**（约 140MB） |
+| ② | 启动一次程序以生成它的配置 |
+| ③ | 把 `characters/simiao/`（20 段动画）拷进程序的角色目录 |
+| ④ | 把当前角色切换为「肆喵」（**写入无 BOM 的 UTF-8**） |
+| ⑤ | 打开开机自启（可在桌宠右键菜单里随时关） |
+| ⑥ | 启动桌宠 |
+
+> 📖 **图文教程 + 常见问题**见 [`安装教程.md`](安装教程.md)（含"双击一闪而过""还是蓝色那只"等排错）。
+
+**macOS / Linux**：
+
+```sh
+sh install.sh
 ```
 
-脚本做两件事：把 `characters/simiao/` 拷进应用的用户数据目录；把 `config.json` 的 `character`
-改成 `simiao`（**写入时去掉 UTF-8 BOM**）。
+载体程序（dsh-pet-indesktop）各平台打包形式不同，需自行从
+[它的 Releases](https://github.com/MerZlin/dsh-pet-indesktop/releases/latest) 装好并**运行过一次**，再执行上面的命令。
 
-重启应用即可看到肆喵。不想改配置也行：只拷角色目录，然后在桌宠上**右键 → 角色菜单 → 肆喵**手动切换
-（热加载，不用重启、不用重新打包）。
+### 高级 / 自定义用法
 
-### 手动安装（macOS / Linux 或不想用脚本）
+只装角色、不动开机自启、不启动程序等：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\安装肆喵.ps1 -SkipAutostart -NoLaunch
+# 参数：-SkipAppInstall（不检查/不装载体程序） -SkipAutostart -NoLaunch -TestDownload（只测下载通道）
+```
+
+安装脚本做两件事：把 `characters/simiao/` 拷进程序的用户数据目录；把 `config.json` 的 `character`
+改成 `simiao`（**写入时去掉 UTF-8 BOM**）。重启程序即可看到肆喵。不想改配置也行：只拷角色目录，
+然后在桌宠上**右键 → 角色菜单 → 肆喵**手动切换（热加载，不用重启、不用重新打包）。
+
+### 手动安装（完全不想用脚本）
 
 把 `characters/simiao/` 整个目录放进：
 
