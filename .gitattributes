@@ -6,8 +6,10 @@
 *.json text eol=lf
 *.yml text eol=lf
 
-# Windows 脚本保持 CRLF（PowerShell 都认，但 CRLF 在记事本里更友好）
+# Windows 脚本保持 CRLF（批处理必须 CRLF；PowerShell 两者都认，CRLF 在记事本里更友好）
 *.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
 
 # 二进制，别做任何转换
 *.png binary
