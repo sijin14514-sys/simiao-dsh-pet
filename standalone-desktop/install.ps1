@@ -141,14 +141,14 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
   # 空目录 = 纯文字气泡（程序源码 _resolve_self_talk_image_dir：空即不带配图）
   $cfg | Add-Member -NotePropertyName self_talk_image_dir -NotePropertyValue '' -Force
   $cfg | Add-Member -NotePropertyName self_talk_texts -NotePropertyValue @(
-    '主人～肆喵在这儿守着，放心忙吧喵。',
-    '要不要喝口水呀？肆喵帮您看着屏幕。',
-    '唔…眼镜又滑下来了，推一下。',
-    '这个任务看起来好难，主人加油喵！',
-    '肆喵的尾巴有点痒……不管了，先盯着进度。',
-    '主人，累了就歇一会儿嘛。',
-    '刚才那个文件改好了吗？肆喵有点好奇。',
-    '偷偷告诉主人：肆喵觉得您挺厉害的。'
+    '主人喵～肆喵在这儿守着喵，放心忙吧喵。',
+    '要不要喝口水呀喵？肆喵帮您看着屏幕喵。',
+    '唔喵…眼镜又滑下来了喵，推一下喵。',
+    '这个任务看起来好难喵，主人加油喵！',
+    '肆喵的尾巴有点痒喵……不管了喵，先盯着进度喵。',
+    '主人喵，累了就歇一会儿嘛喵～',
+    '刚才那个文件改好了吗喵？肆喵有点好奇喵。',
+    '偷偷告诉主人喵：肆喵觉得您挺厉害的喵！'
   ) -Force
 
   $json = $cfg | ConvertTo-Json -Depth 30
