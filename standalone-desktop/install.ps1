@@ -111,14 +111,10 @@ function Enable-Autostart($exe, $exeDir, $appDirName) {
   if ($read -eq $cmd) { Ok '已开启开机自启（可在桌宠右键菜单里关闭）' } else { Warn '开机自启写入后校验不一致' }
 }
 
-# 让肆喵"会说话"：写自定义台词 + 过程汇报概率门 + 自言自语，并把气泡配图放到用户目录。
+# 让肆喵"会说话"：写自定义台词 + 过程汇报概率门 + 自言自语（纯文字气泡，不配图）。
 # 全程无 BOM 写入；对方的其他设置原样保留（只覆盖这几个键）。
 function Enable-SimiaoTalk($userDataDir, $talkDir) {
   if (-not (Test-Path $talkDir)) { Warn "跳过说话配置（找不到 $talkDir）"; return }
-
-  $facesDst = Join-Path $userDataDir 'simiao-faces'
-  New-Item -ItemType Directory -Force -Path $facesDst | Out-Null
-  Copy-Item (Join-Path $talkDir 'faces\*.png') $facesDst -Force
 
   $cfgPath = Join-Path $userDataDir 'config.json'
   $text = ([System.IO.File]::ReadAllText($cfgPath)).TrimStart([char]0xFEFF)
@@ -142,7 +138,8 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
   $cfg | Add-Member -NotePropertyName self_talk_min_interval -NotePropertyValue 8.0 -Force
   $cfg | Add-Member -NotePropertyName self_talk_max_interval -NotePropertyValue 18.0 -Force
   $cfg | Add-Member -NotePropertyName self_talk_duration_seconds -NotePropertyValue 4.0 -Force
-  $cfg | Add-Member -NotePropertyName self_talk_image_dir -NotePropertyValue $facesDst -Force
+  # 空目录 = 纯文字气泡（程序源码 _resolve_self_talk_image_dir：空即不带配图）
+  $cfg | Add-Member -NotePropertyName self_talk_image_dir -NotePropertyValue '' -Force
   $cfg | Add-Member -NotePropertyName self_talk_texts -NotePropertyValue @(
     '主人～肆喵在这儿守着，放心忙吧喵。',
     '要不要喝口水呀？肆喵帮您看着屏幕。',
@@ -156,7 +153,7 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
 
   $json = $cfg | ConvertTo-Json -Depth 30
   [System.IO.File]::WriteAllText($cfgPath, $json, [System.Text.UTF8Encoding]::new($false))
-  Ok '已开启「会说话」：自定义台词 + 干活汇报 + 自言自语（气泡图已就位）'
+  Ok '已开启「会说话」：自定义台词 + 干活汇报 + 自言自语（纯文字气泡）'
 }
 
 # ══════════════════════════════════════════════════════════════════════

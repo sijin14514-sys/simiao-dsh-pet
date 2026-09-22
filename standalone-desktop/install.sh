@@ -55,18 +55,10 @@ cp "$CFG" "$CFG.bak"
 
 if command -v python3 >/dev/null 2>&1; then
   python3 - "$CFG" "$TALK_DIR" "$FOUND" <<'PY'
-import json, os, shutil, sys
+import json, os, sys
 
 cfg_path, talk_dir, user_dir = sys.argv[1], sys.argv[2], sys.argv[3]
 
-# 气泡配图放到用户目录（配置里要用绝对路径）
-faces_src = os.path.join(talk_dir, 'faces')
-faces_dst = os.path.join(user_dir, 'simiao-faces')
-if os.path.isdir(faces_src):
-    os.makedirs(faces_dst, exist_ok=True)
-    for name in os.listdir(faces_src):
-        if name.lower().endswith(('.png', '.jpg', '.jpeg')):
-            shutil.copy2(os.path.join(faces_src, name), os.path.join(faces_dst, name))
 
 with open(cfg_path, encoding='utf-8-sig') as f:
     cfg = json.load(f)
@@ -88,7 +80,8 @@ cfg['self_talk_enabled'] = True
 cfg['self_talk_min_interval'] = 8.0
 cfg['self_talk_max_interval'] = 18.0
 cfg['self_talk_duration_seconds'] = 4.0
-cfg['self_talk_image_dir'] = faces_dst
+# 空目录 = 纯文字气泡（程序源码约定：空即不带配图）
+cfg['self_talk_image_dir'] = ''
 cfg['self_talk_texts'] = [
     '主人～肆喵在这儿守着，放心忙吧喵。',
     '要不要喝口水呀？肆喵帮您看着屏幕。',
