@@ -20,6 +20,7 @@
 param(
   [switch]$SkipAppInstall,
   [switch]$SkipAutostart,
+  [switch]$SkipTalk,
   [switch]$NoLaunch,
   [switch]$TestDownload
 )
@@ -108,6 +109,54 @@ function Enable-Autostart($exe, $exeDir, $appDirName) {
   Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name $appDirName -Value $cmd
   $read = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name $appDirName).$appDirName
   if ($read -eq $cmd) { Ok '已开启开机自启（可在桌宠右键菜单里关闭）' } else { Warn '开机自启写入后校验不一致' }
+}
+
+# 让肆喵"会说话"：写自定义台词 + 过程汇报概率门 + 自言自语，并把气泡配图放到用户目录。
+# 全程无 BOM 写入；对方的其他设置原样保留（只覆盖这几个键）。
+function Enable-SimiaoTalk($userDataDir, $talkDir) {
+  if (-not (Test-Path $talkDir)) { Warn "跳过说话配置（找不到 $talkDir）"; return }
+
+  $facesDst = Join-Path $userDataDir 'simiao-faces'
+  New-Item -ItemType Directory -Force -Path $facesDst | Out-Null
+  Copy-Item (Join-Path $talkDir 'faces\*.png') $facesDst -Force
+
+  $cfgPath = Join-Path $userDataDir 'config.json'
+  $text = ([System.IO.File]::ReadAllText($cfgPath)).TrimStart([char]0xFEFF)
+  $cfg = $text | ConvertFrom-Json
+
+  $phrPath = Join-Path $talkDir 'simiao-phrases.json'
+  if (Test-Path $phrPath) {
+    $phrText = ([System.IO.File]::ReadAllText($phrPath)).TrimStart([char]0xFEFF)
+    $cfg.dialogue_mode = 'custom'
+    $cfg.dialogue_phrases = $phrText | ConvertFrom-Json
+  }
+
+  if (-not $cfg.agent_link) { $cfg | Add-Member -NotePropertyName agent_link -NotePropertyValue ([pscustomobject]@{}) -Force }
+  $cfg.agent_link | Add-Member -NotePropertyName report_gates -NotePropertyValue ([pscustomobject]@{
+    state = 1.0; activity = 1.0; approval = 1.0; done = 1.0
+    exec_failed = 1.0; model_access = 1.0; stuck = 1.0; bridge = 1.0
+  }) -Force
+  $cfg.agent_link | Add-Member -NotePropertyName notify_activity -NotePropertyValue $true -Force
+
+  $cfg | Add-Member -NotePropertyName self_talk_enabled -NotePropertyValue $true -Force
+  $cfg | Add-Member -NotePropertyName self_talk_min_interval -NotePropertyValue 8.0 -Force
+  $cfg | Add-Member -NotePropertyName self_talk_max_interval -NotePropertyValue 18.0 -Force
+  $cfg | Add-Member -NotePropertyName self_talk_duration_seconds -NotePropertyValue 4.0 -Force
+  $cfg | Add-Member -NotePropertyName self_talk_image_dir -NotePropertyValue $facesDst -Force
+  $cfg | Add-Member -NotePropertyName self_talk_texts -NotePropertyValue @(
+    '主人～肆喵在这儿守着，放心忙吧喵。',
+    '要不要喝口水呀？肆喵帮您看着屏幕。',
+    '唔…眼镜又滑下来了，推一下。',
+    '这个任务看起来好难，主人加油喵！',
+    '肆喵的尾巴有点痒……不管了，先盯着进度。',
+    '主人，累了就歇一会儿嘛。',
+    '刚才那个文件改好了吗？肆喵有点好奇。',
+    '偷偷告诉主人：肆喵觉得您挺厉害的。'
+  ) -Force
+
+  $json = $cfg | ConvertTo-Json -Depth 30
+  [System.IO.File]::WriteAllText($cfgPath, $json, [System.Text.UTF8Encoding]::new($false))
+  Ok '已开启「会说话」：自定义台词 + 干活汇报 + 自言自语（气泡图已就位）'
 }
 
 # ══════════════════════════════════════════════════════════════════════
@@ -209,14 +258,20 @@ Step 4 '切换当前角色为「肆喵」'
 Copy-Item $cfgPath "$cfgPath.bak" -Force -ErrorAction SilentlyContinue
 Set-CharacterInConfig $cfgPath
 
-# ── ④ 开机自启 ─────────────────────────────────────────────────────────
+# ── ④ 让她会说话 ───────────────────────────────────────────────────────
+if (-not $SkipTalk) {
+  Step 5 '配置「会说话」（台词 / 干活汇报 / 自言自语）'
+  Enable-SimiaoTalk $userDataDir (Join-Path $PSScriptRoot 'talk')
+}
+
+# ── ⑤ 开机自启 ─────────────────────────────────────────────────────────
 if (-not $SkipAutostart) {
-  Step 5 '设置开机自启'
+  Step 6 '设置开机自启'
   Enable-Autostart $exe $exeDir $appDirName
 }
 
-# ── ⑤ 启动 ─────────────────────────────────────────────────────────────
-Step 6 '启动桌宠'
+# ── ⑥ 启动 ─────────────────────────────────────────────────────────────
+Step 7 '启动桌宠'
 Get-Process -Name $appDirName -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 4
 if (-not $NoLaunch) {

@@ -1,0 +1,153 @@
+{
+  "global": {
+    "start": [
+      "主人，{name}开工啦～肆喵帮您盯着它喵。",
+      "{name}动起来了！肆喵把围裙系紧一点，准备看好戏～",
+      "收到收到，{name}要开始干活咯，主人放心交给肆喵喵。"
+    ],
+    "thinking": [
+      "唔…{name}正在想事情呢，主人稍等一下下喵～",
+      "{name}在认真琢磨，肆喵也不敢出声打扰它。",
+      "脑袋里转圈圈中……{name}还在想办法，主人别催嘛。"
+    ],
+    "activity.read": [
+      "{name}正在看{label}，肆喵凑过去一起瞄两眼喵～",
+      "第{step}步啦，{name}在读{label}，肆喵替主人记着进度。",
+      "{tool}在翻{label}呢，肆喵帮您盯着别漏掉什么～"
+    ],
+    "activity.search": [
+      "{name}正在找{label}，肆喵也跟着到处翻喵～",
+      "搜一搜、找一找，{name}在查{label}，第{step}步咯。",
+      "{tool}正在大海捞针（找{label}），肆喵帮您一起捞～"
+    ],
+    "activity.edit": [
+      "{name}正在改{label}，肆喵替您看着别改坏喵～",
+      "第{step}步：{name}在动{label}，肆喵盯着改动呢。",
+      "{tool}正在修改{label}，放心，肆喵守着呢。"
+    ],
+    "activity.run": [
+      "{name}正在跑{label}，结果很快就出来咯～",
+      "{tool}已经跑起来啦，第{step}步，肆喵屏住呼吸等结果喵。",
+      "{name}在运行{label}呢，希望一次就过呀。"
+    ],
+    "activity.default": [
+      "{name}正忙着{label}，肆喵守着它喵。",
+      "第{step}步：{name}在处理{label}，主人稍等～",
+      "{tool}正在忙{label}，肆喵帮您看着。"
+    ],
+    "done.success": [
+      "主人，{name}干完啦～肆喵帮您看着成果呢！",
+      "搞定咯！{name}完成任务，肆喵去给自己倒杯水喵。",
+      "{name}收工啦，主人去验收一下吧～"
+    ],
+    "done.attention": [
+      "{name}停下来等主人确认咯～",
+      "{name}把结果放这儿啦，主人过目一下喵。",
+      "主人，{name}暂停了，要不要看看它做了啥？"
+    ],
+    "agent.attention": [
+      "主人，{name}在等您拍板呢，肆喵可不敢替您决定喵。",
+      "该主人出马啦——{name}停在这儿等您确认。",
+      "{name}举手提问呢，主人去看看嘛～"
+    ],
+    "agent.error": [
+      "呜…{name}好像出问题了，主人来看看嘛。",
+      "喵！{name}那边报错了，肆喵先帮您守着。",
+      "{name}好像不太顺利，主人要不要瞧一眼？"
+    ],
+    "agent.missing": [
+      "咦？肆喵找不到{name}了喵。",
+      "{name}的信号不见了，主人检查一下嘛～",
+      "看不见{name}了……它跑去哪儿了喵？"
+    ],
+    "approval.command": [
+      "主人，{name}想跑这条命令：{command}，您点头才放行喵～",
+      "{name}申请执行{command}，肆喵把爪子按在按钮上等您批准。",
+      "涉及{label}的命令要主人同意哦：{command}"
+    ],
+    "approval.tool": [
+      "主人，{name}想用{toolName}，给不给它用呀？",
+      "{label}这步要放行吗？{name}乖乖等着呢喵。",
+      "{name}想动{toolName}，肆喵等主人一句话～"
+    ],
+    "approval.generic": [
+      "主人，{name}这步需要您确认一下喵～",
+      "{name}停在这儿等您拍板呢，主人看看嘛。",
+      "有件事要主人点头，{name}才敢继续喵。"
+    ],
+    "question.empty": [
+      "主人，{name}正等您回复呢～",
+      "{name}还停在{label}这里等主人喵。",
+      "主人回句话嘛，{name}等着呢。"
+    ],
+    "question.one": [
+      "主人，{name}问您：{body}",
+      "{name}想听主人的意见：{body}",
+      "有个小问题要主人决定喵——{body}"
+    ],
+    "question.many": [
+      "主人，{name}攒了{count}个问题等您回答呢喵～",
+      "{count}个问题排排坐等主人，{name}在这边候着。",
+      "主人慢慢答，{name}有{count}个问题想问您～"
+    ],
+    "failure.retry": [
+      "呜，{name}试了{retries}次还是不行（{errorMessage}），主人看看嘛。",
+      "{name}重试到第{retries}次了，还是卡着，肆喵有点心疼它喵。",
+      "错误{errorCode}又来了……{name}已经试了{retries}次啦。"
+    ],
+    "failure.tool": [
+      "{name}的工具执行失败啦（{errorMessage}），肆喵帮您盯着。",
+      "呜——{name}那边出错了：{errorCode}，主人瞧瞧？",
+      "{name}这步失败了，试了{retries}次，肆喵守着现场。"
+    ],
+    "failure.generic": [
+      "{name}这次没成功，主人来看一眼嘛。",
+      "呜…{name}遇到麻烦了：{errorMessage}",
+      "{name}失败了，肆喵先把现场看着喵。"
+    ],
+    "model_access.one": [
+      "主人，模型那边被限流啦（{errorCode}），等会儿再试喵～",
+      "第{retry}次尝试还没过去（{errorMessage}），肆喵建议歇一小会儿。",
+      "模型访问失败了一次，主人别急呀。"
+    ],
+    "model_access.many": [
+      "呜，已经连续{count}次访问失败了（{errorCode}），先别硬冲嘛。",
+      "连续{consecutiveRetryCount}次都被挡住啦，{errorMessage}，我们歇会儿吧。",
+      "模型那边一直不通，肆喵陪着主人一起等喵。"
+    ],
+    "watchdog.warning": [
+      "主人，{name}好像在原地打转：{reasons}",
+      "肆喵发现{name}有点绕圈圈，原因是{reasons}。",
+      "{name}最近的行为有点可疑哦：{reasons}"
+    ],
+    "watchdog.control": [
+      "{name}绕圈绕得肆喵都晕了：{reasons}。要帮它换个方向，还是直接喊停？",
+      "主人，{name}陷进圈圈里啦：{reasons}，您说怎么办喵？",
+      "再转下去就白忙了，{name}一直在重复：{reasons}——主人决定吧。"
+    ],
+    "pattern.warning": [
+      "主人，{name}的行为模式有点可疑：{reasons}",
+      "肆喵观察到{name}在重复同样的事：{reasons}",
+      "{name}好像陷入套路了：{reasons}，主人留意一下喵。"
+    ],
+    "pattern.control": [
+      "{name}又重复刚才那套了：{reasons}，主人要不要喊停？",
+      "主人，{name}的重复有点多了：{reasons}，肆喵建议打断一下。",
+      "{reasons}——{name}再这样下去要白忙啦。"
+    ],
+    "stuck.reminder": [
+      "主人～{name}卡住好久啦，要不要看看它喵？",
+      "{name}半天没动静了，肆喵有点担心。",
+      "喵？{name}还好吗，主人去瞧瞧嘛～"
+    ],
+    "llm_error.api": [
+      "主人，模型那边报错了，肆喵帮您盯着喵。",
+      "AI 那边好像不太舒服，稍后再试试吧。"
+    ],
+    "dsh.writeback.failed": [
+      "呜呜，消息没送回 DSH，主人去界面处理一下吧～",
+      "回传失败啦……肆喵这次真的没偷懒喵。"
+    ]
+  },
+  "agents": {}
+}
