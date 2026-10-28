@@ -39,6 +39,11 @@ const inject = ["llm", "agentDefaultModel"];
 const CONTROL_POLL_MS = 150;
 const CONTROL_MAX_CONTEXT = 12000;
 const CONTROL_MAX_REQUEST_AGE_MS = 10 * 60 * 1000;
+// 状态心跳周期：aggregateWrite 只在状态翻转时落盘，所以桌宠若在 working 中途启动
+// （开机自启、手动重启），读不到"当前状态"，会一直演待机直到下一次翻转。定期重写
+// 一次当前状态，让后来启动的消费者在一个周期内对齐；同状态的重复记录对已对齐的
+// 消费者是幂等的（桌宠按状态变化驱动动画）。
+const STATE_HEARTBEAT_MS = 45 * 1000;
 
 // 进程内状态去重 + 多 Agent 聚合：
 // 1) dsh 在 agent 创建/状态切换瞬间会抖动出重复 idle（实测 idle→working 仅隔
@@ -1363,6 +1368,14 @@ export function apply(ctx) {
   // directly.  Control therefore runs beside the real Agent and can cancel,
   // diagnose, and steer it without relying on the web API transport.
   startControlQueue(ctx);
+
+  // 状态心跳：见 STATE_HEARTBEAT_MS 注释。只在已有已知状态后开始重写，
+  // 避免在尚无 agent 时凭空写一条 idle（那会占住桌宠端的换帧节流位）。
+  const stateHeartbeat = setInterval(() => {
+    if (lastState === null) return;
+    writeRecord({ state: lastState, heartbeat: true });
+  }, STATE_HEARTBEAT_MS);
+  ctx.effect?.(() => () => clearInterval(stateHeartbeat), `${PLUGIN_ID}.state-heartbeat()`);
 
   // 依赖 cordis 的 context 生命周期：agent/status 监听挂在 agent.ctx 上，
   // agent 销毁时随其 context 自动解绑，不累积 disposer。
