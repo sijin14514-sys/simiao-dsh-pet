@@ -1,3 +1,19 @@
+// 肆喵 · dsh-pet 宠物包（pet pack）配置
+// 适配 dsh-pet 0.3.8 / DeepSeek Harness 0.2.x（2026-10-28 更新）
+//
+// 与 2026-09-19 那版的差别（素材与权重一个字没改，只补 0.3.8 需要的字段）：
+//   1) fixedEnabled: false                 0.3.8 新增的实例级字段，显式写清，不靠默认值兜底
+//   2) whisperEnabled / workStatusEnabled  显式写 false（原来靠默认值；0.3.8 里写清更稳）
+//   3) whisperPrompt                       肆喵自己的人设（不写会继承 main 条目那份、也就是别人的设定）
+//
+// 故意不写的字段（写了才是问题）：
+//   events.workStatus / workStatusTexts —— 本包素材里没有 工作状态-* 那几段，workStatusEnabled=false，
+//                                          写了会去引用不存在的素材（右键有菜单、点了播不出来）。
+//   events.whisper                     —— whisperEnabled=false，默认不开碎碎念（它每 300 秒会调一次模型）。
+//   physics / font / memes             —— 全局默认，由 dsh-pet 自己的默认配置提供，不必在种类文件里覆盖。
+//
+// 素材位置：$DSH_HOME/dsh-pet/pet/simiao-animation/<动画名>.webm（640×360 / 24fps / VP9-alpha）
+//          下面的动画名必须与文件名一一对应（不含扩展名）。少一个 = 右键有菜单但点了不播放。
 {
   "pets": [
     {
@@ -5,6 +21,11 @@
       "name": "肆喵",
       "size": 380,
       "balanceEnabled": true,
+      "whisperEnabled": false,
+      "workStatusEnabled": false,
+      "fixedEnabled": false,
+      // 合法值只有 web / desktop / both / none（**没有 browser**；写错会静默回退 both 并去下载 Electron）。
+      // 改完刷新页面即生效，不用重启 DSH。
       "display": "web",
       "position": {
         "corner": "bottom-right",
@@ -13,10 +34,17 @@
       }
     }
   ],
+
+  // 条目级人设（本文件顶层一份，只对 simiao 这个条目生效）。
+  // 实际发给模型的 system = 这段 + 插件自动追加的「你的名字是“肆喵”。」+ 当前时间背景，
+  // 所以这里不要写名字和日期。whisperEnabled=false 时它不生效，留着是为了将来开碎碎念时人设不串。
+  "whisperPrompt": "你是主人桌面上的Q版猫娘小女仆肆喵，说话自然随意、短短一句（20字以内），软软糯糯带点小俏皮，句尾常带「喵」，说人话不啰嗦，不要解释你自己，不要提你是AI。",
+
   "animations": {
     "idle": [
       "待机呼吸-AI"
     ],
+    // 不自己翻朝向（turn 权重 0），所以空池——留空比随手塞一段「会翻转」的动画安全
     "turn": [],
     "drag": [
       "被鼠标拖拽悬空反抗-AI"
@@ -74,6 +102,7 @@
       }
     ],
     "events": {
+      // 只有 1 段余额动画，六档都指向它（0.3.8 要求 6 档，缺档会告警）
       "balance": [
         "余额-钱袋如常-AI",
         "余额-钱袋如常-AI",
@@ -84,6 +113,8 @@
       ]
     }
   },
+
+  // idle 65 + turn 0 + move 5 + 分类 (12+10+8=30) = 100，改任何一项都要保持总和 100
   "animationWeights": {
     "idle": 65,
     "turn": 0,

@@ -9,6 +9,10 @@
 - **点击反馈有 5 种**（每次点她随机抽一段）；**待机 65% 是站着呼吸**，动作之间会歇一歇，不会一直忙
 - 640×360 VP9-alpha webm，浏览器（Chrome/Edge/Firefox）与桌面模式（Electron）通用
 
+> **版本**：已在 `dsh-pet@0.3.8` + DSH `0.2.0-rc.2` 上实测通过（2026-10-28）。配置已按 0.3.8 补齐
+> `fixedEnabled` / `whisperEnabled` / `workStatusEnabled` 这些实例级字段，并写上肆喵自己的人设；
+> 动画素材与权重跟旧版完全一致。dsh-pet **0.2.8 及更早**装不进 DSH 0.2.x（peer 上限在 `<0.2.0-0`）。
+
 ![预览](preview.png)
 
 ## 一、前置条件

@@ -14,13 +14,14 @@
 
 | | 路线 | 需要 DSH？ | 适合谁 |
 |---|---|---|---|
-| **A** | 装进 DSH 的 `dsh-pet` 插件（[`pet-pack/`](pet-pack/)） | 要 | ⚠️ **仅 DSH ≤ 0.1.x**（原因见下） |
+| **A** | 装进 DSH 的 `dsh-pet` 插件（[`pet-pack/`](pet-pack/)） | 要 | ✓ **DSH 0.1.x / 0.2.x 都行**（需要 `dsh-pet ≥ 0.3.8`） |
 | **B** | 独立桌面版（[`standalone-desktop/`](standalone-desktop/)） | 不要 | 只想桌面上有只猫 |
 | **C** | **独立桌面版 + DSH 联动**（`standalone-desktop/` + [`dsh-bridge/`](dsh-bridge/)） | 要（0.1.x / 0.2.x 都行） | **想干活时被她盯着、还会说话**（推荐） |
 
-> **A 路线的现状**：`dsh-pet@0.2.8` 声明了 `peerDependencies: ^0.1.1-rc.2`（上限 `<0.2.0-0`），
-> 在 DSH **0.2.0 及以后会被插件版本门禁直接拒装**。这不是本仓库能修的（要上游放宽 peer），
-> DSH 0.2.x 用户请走 **B / C**。详见文末「DSH 版本兼容」。
+> **A 路线已不再是死路**：早年 `dsh-pet@0.2.8` 声明 `peerDependencies: ^0.1.1-rc.2`（上限 `<0.2.0-0`），
+> 在 DSH 0.2.0 及以后会被插件版本门禁拒装；**上游已在 0.3.x 放宽**——`dsh-pet@0.3.8` 的 peer
+> 全部是 `^0.2.0-rc.1`，且 `dsh.compatibility.dshReleases` 明确标注 `0.2.0-rc.2: compatible`。
+> 2026-10-28 已在 DSH 0.2.0-rc.2 + dsh-pet 0.3.8 上实测通过（本仓库的 `pet-pack/` 已按 0.3.8 的字段补齐）。
 
 ## ✨ 素材
 
@@ -49,10 +50,10 @@
 
 ## 🚀 用起来
 
-### A. 装进 DSH 的 dsh-pet 插件（⚠️ 仅 DSH ≤ 0.1.x）
+### A. 装进 DSH 的 dsh-pet 插件（DSH 0.1.x / 0.2.x 均可）
 
 ```sh
-dsh plugin --profile web add dsh-pet
+dsh plugin --profile web add dsh-pet    # 需要 ≥ 0.3.8
 ```
 
 ```powershell
@@ -160,7 +161,7 @@ node dsh-bridge/check.mjs
 | 组件 | 0.1.x | 0.2.x（含 0.2.0-rc.2） | 说明 |
 |---|---|---|---|
 | `dsh-bridge`（本仓库的桥接） | ✓ | ✓ | 零依赖、不声明 peer，**不受版本门禁影响**，两侧均已实测联动 |
-| `dsh-pet`（上游插件本体） | ✓ | ✗ 被拒装 | peer 上限 `<0.2.0-0`，需上游放宽，或改用独立桌面版 |
+| `dsh-pet`（上游插件本体） | ✓ | ✓（≥ 0.3.8） | 0.3.x 已把 peer 放宽到 `^0.2.0-rc.1`，`dshReleases` 标注 0.2.0-rc.2 compatible；0.2.8 及更早仍会被门禁拒装 |
 | `dsh-pet-indesktop`（独立桌宠） | 无关 | 无关 | 独立进程，不经过 DSH 插件系统 |
 
 写 DSH 本地插件的两条红线（本仓库的桥接把它们写成了测试，见 `dsh-bridge/verify_import.mjs`）：
