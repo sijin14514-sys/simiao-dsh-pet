@@ -52,10 +52,18 @@ $DSH_HOME/dsh-pet/pet/
 ## 三、安装后
 
 - **刷新浏览器页面**即可看到肆喵（文件宠物无需重启 DSH）。
-- 设置页**不会列出**文件宠物（dsh-pet 的既定行为）——要改大小 / 位置 / 显示方式，直接编辑 `simiao-config.json`：
+- 设置页**不会列出** pet pack 的宠物。这是 `dsh-pet` 写死的行为：客户端 `applyConfig` 取的列表是
+  `merged.main.pets`，保存也只写 `main-config.jsonc`，而 pet pack 是并列的另一个条目。所以要改大小 / 位置 / 显示方式，
+  直接编辑 `simiao-config.json`：
   - `display`：`web`（只在网页，默认）/ `desktop`（只在桌面）/ `both`（两边都显示）/ `none`
   - `size`：显示尺寸（默认 380）；`position.corner`：`top-left|top-right|bottom-left|bottom-right`
   - 桌面模式首次使用会自动下载 Electron（约 138MB），不想下就保持 `web`。
+- **想让肆喵出现在设置页里**、用页面开关管理（而不是改文件）：仓库里的
+  [`tools/补丁-设置页支持petpack.mjs`](../tools/补丁-设置页支持petpack.mjs) 给 `dsh-pet` 打个小补丁
+  （列表聚合成所有条目 + 新增 `PUT /config/entry/<名>`，只替换该条目的 `pets[]`，保留动画与权重）。
+  代价：**改的是 node_modules 里的第三方产物，升级 dsh-pet 会覆盖，需要重跑脚本**；锚点只针对 0.3.8。
+  另外：上游 main 已于 2026-10-27 实现同一功能（commit `d15ad4d`「桌宠配置支持文件宠物与种类切换」），
+  只是还没发版（npm 最新仍是 0.3.8）。**等 0.3.9 发出来后请升级插件、不要再打这个补丁**，那时官方页面直接支持。
 - **卸载**：删掉 `$DSH_HOME/dsh-pet/pet/` 下的 `simiao-config.json` 与 `simiao-animation/` 即可。
 
 ## 四、说明与授权

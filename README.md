@@ -23,6 +23,11 @@
 > 全部是 `^0.2.0-rc.1`，且 `dsh.compatibility.dshReleases` 明确标注 `0.2.0-rc.2: compatible`。
 > 2026-10-28 已在 DSH 0.2.0-rc.2 + dsh-pet 0.3.8 上实测通过（本仓库的 `pet-pack/` 已按 0.3.8 的字段补齐）。
 
+> **A 路线的一个限制**：`dsh-pet` 设置页的「宠物列表」只列 `main` 条目（客户端写死取 `merged.main.pets`），
+> pet pack 是并列的另一个条目，所以**那里看不到肆喵**——改大小 / 位置 / 显示方式请直接编辑 `simiao-config.json`。
+> 想让她出现在列表里、用页面开关管理，用可选的 [`tools/补丁-设置页支持petpack.mjs`](tools/补丁-设置页支持petpack.mjs)，
+> 代价是升级 dsh-pet 会覆盖补丁。
+
 ## ✨ 素材
 
 **独立桌面版：22 个动画文件**（[`standalone-desktop/characters/simiao/videos/`](standalone-desktop/characters/simiao/videos/)）
