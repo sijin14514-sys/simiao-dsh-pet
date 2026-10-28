@@ -3,7 +3,7 @@
 让肆喵**完全不依赖 DSH** 跑在桌面上——由 [dsh-pet-indesktop](https://github.com/MerZlin/dsh-pet-indesktop)
 （Python + PySide6 的独立桌宠）承载。本包提供**角色素材 + 一键安装脚本**。
 
-> 同一套素材（本包 **25 段**）也能装在 DSH 的 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet)
+> 同一套素材（本包 **22 个动画文件 / 20 个不同画面**）也能装在 DSH 的 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet)
 > 插件里（⚠️ 那个插件只支持 DSH ≤ 0.1.x，见仓库主 README 的「DSH 版本兼容」）。
 >
 > 想让她**跟着你的 DSH Agent 动、还会说话**，装完本包再装 [`../dsh-bridge/`](../dsh-bridge/)（见第七节）。
@@ -18,7 +18,7 @@
 |---|---|
 | ① | 检查有没有装独立桌宠程序 —— **没装就从 GitHub 自动下载并静默安装**（约 140MB） |
 | ② | 启动一次程序以生成它的配置 |
-| ③ | 把 `characters/simiao/`（25 段动画）拷进程序的角色目录 |
+| ③ | 把 `characters/simiao/`（22 个动画文件）拷进程序的角色目录 |
 | ④ | 把当前角色切换为「肆喵」（**写入无 BOM 的 UTF-8**） |
 | ⑤ | 打开开机自启（可在桌宠右键菜单里随时关） |
 | ⑥ | 启动桌宠 |
@@ -85,7 +85,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -SkipAutostart
 | `videos/click/` | 点击回应-开心跃动 / 被吓一跳 / 生气跺脚 / 鼓掌庆祝 / 鞠躬 |
 | `videos/drag/` | 被鼠标拖拽悬空反抗 |
 | `videos/move/` | 小碎步走路 |
-| `videos/random/` | 左右张望 / 招手打招呼 / 摇头晃脑 / 冒爱心 / 原地转圈 / 吃零食 / 打瞌睡 / 抱着枕头睡觉 / 看书 / 擦汗 / 戴耳机听歌 / **工作状态-看代码 / 工作状态-戴耳机专注 / 工作状态-忙碌擦汗 / 伸懒腰-打盹 / 伸懒腰-摸鱼吃零食** |
+| `videos/random/` | 左右张望 / 招手打招呼 / 摇头晃脑 / 冒爱心 / 原地转圈 / 吃零食 / 打瞌睡 / 抱着枕头睡觉 / 看书 / 擦汗 / 戴耳机听歌 / 伸懒腰-打盹 / 伸懒腰-摸鱼吃零食 |
 | `videos/events/balance/` | 余额-钱袋如常 |
 
 **两点已知差异**：
@@ -99,7 +99,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -SkipAutostart
 | 步骤 | 结果 |
 |---|---|
 | 装角色到用户目录 + 改 `character` | ✓ |
-| 应用启动日志 | `当前形象: simiao`、`素材加载完成：simiao 25 段动画` |
+| 应用启动日志 | `当前形象: simiao`、`素材加载完成：simiao 22 段动画` |
 | 画面 | ✓ 桌面上出现肆喵，播放 `待机呼吸` |
 | 是否需要 DSH | **完全不需要**，独立进程运行 |
 

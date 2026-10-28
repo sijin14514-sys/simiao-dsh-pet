@@ -1,4 +1,4 @@
-﻿<#
+<#
   肆喵 · DSH 侧桥接插件一键安装（Windows）
 
   用法（一般直接用默认值）：
@@ -149,4 +149,4 @@ Write-Host ''
 Write-Host '重启后验证：' -ForegroundColor Cyan
 Write-Host "  node `"$(Join-Path $BridgeDir 'check.mjs')`""
 Write-Host ''
-Write-Host '然后跟肆喵说句话，她应该切到工作状态并冒气泡。' -ForegroundColor Cyan
+Write-Host '然后跟肆喵说句话，她应该切到"干活中"状态并冒气泡（动作取自她的普通随机池）。' -ForegroundColor Cyan
