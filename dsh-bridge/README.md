@@ -24,7 +24,7 @@
 因此本目录的 `package.json` 里三个依赖字段都必须是空的，`verify_import.mjs` 会把这条红线当测试跑。
 
 另一个好处是**它不受 DSH 的插件版本门禁影响**：不声明 peer，就不会像 `dsh-plugin-chart`、
-`dsh-pet`（peer 上限 `<0.2.0-0`）那样在 DSH 0.2.x 上被直接拒装。
+`dsh-pet@0.2.8`（peer 上限 `<0.2.0-0`；0.3.8 已放宽）那样在 DSH 0.2.x 上被直接拒装。
 
 ## 安装
 

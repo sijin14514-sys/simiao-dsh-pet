@@ -4,7 +4,7 @@
 （Python + PySide6 的独立桌宠）承载。本包提供**角色素材 + 一键安装脚本**。
 
 > 同一套素材（本包 **22 个动画文件 / 20 个不同画面**）也能装在 DSH 的 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet)
-> 插件里（⚠️ 那个插件只支持 DSH ≤ 0.1.x，见仓库主 README 的「DSH 版本兼容」）。
+> 插件里（`dsh-pet` ≥0.3.8 起支持 DSH 0.2.x；更早的版本会被门禁拒装，见仓库主 README 的「DSH 版本兼容」）。
 >
 > 想让她**跟着你的 DSH Agent 动、还会说话**，装完本包再装 [`../dsh-bridge/`](../dsh-bridge/)（见第七节）。
 
