@@ -139,6 +139,15 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
     $cfg | Add-Member -NotePropertyName dialogue_phrases -NotePropertyValue ($phrText | ConvertFrom-Json) -Force
   }
 
+  $personaPath = Join-Path $talkDir 'simiao-persona.txt'
+  if (Test-Path $personaPath) {
+    $personaText = ([System.IO.File]::ReadAllText($personaPath)).TrimStart([char]0xFEFF).Trim()
+    if (-not $cfg.chat) { $cfg | Add-Member -NotePropertyName chat -NotePropertyValue ([pscustomobject]@{}) -Force }
+    $cfg.chat | Add-Member -NotePropertyName default_system_prompt -NotePropertyValue $personaText -Force
+  }
+  if (-not $cfg.character_aliases) { $cfg | Add-Member -NotePropertyName character_aliases -NotePropertyValue ([pscustomobject]@{}) -Force }
+  $cfg.character_aliases | Add-Member -NotePropertyName simiao -NotePropertyValue '肆喵' -Force
+
   if (-not $cfg.agent_link) { $cfg | Add-Member -NotePropertyName agent_link -NotePropertyValue ([pscustomobject]@{}) -Force }
   $cfg.agent_link | Add-Member -NotePropertyName report_gates -NotePropertyValue ([pscustomobject]@{
     state = 1.0; activity = 1.0; approval = 1.0; done = 1.0

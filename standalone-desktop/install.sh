@@ -71,6 +71,12 @@ if os.path.isfile(phr):
         cfg['dialogue_mode'] = 'custom'
         cfg['dialogue_phrases'] = json.load(f)
 
+persona_path = os.path.join(talk_dir, 'simiao-persona.txt')
+if os.path.isfile(persona_path):
+    with open(persona_path, encoding='utf-8-sig') as f:
+        cfg.setdefault('chat', {})['default_system_prompt'] = f.read().strip()
+cfg.setdefault('character_aliases', {})['simiao'] = '肆喵'
+
 al = cfg.setdefault('agent_link', {})
 al['report_gates'] = {'state': 1.0, 'activity': 1.0, 'approval': 1.0, 'done': 1.0,
                       'exec_failed': 1.0, 'model_access': 1.0, 'stuck': 1.0, 'bridge': 1.0}
