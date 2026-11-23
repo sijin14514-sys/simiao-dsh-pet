@@ -78,7 +78,7 @@ sh ./pet-pack/install.sh
 
 | 自动完成 | 说明 |
 |---|---|
-| ① 检查载体程序 | 没装就**自动从 GitHub 下载并静默安装**（约 140MB） |
+| ① 检查载体程序 | 没装就**自动从 GitHub 下载并静默安装**（约 280MB） |
 | ② 生成配置 | 自动启动一次程序 |
 | ③ 装角色 + 切角色 + 会说话 | 22 段动画拷进角色目录、当前角色改为「肆喵」、写入自定义台词与自言自语（全部 **UTF-8 无 BOM**） |
 | ④ 开机自启 | 写注册表项（可在程序右键菜单里关掉） |
@@ -94,7 +94,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\standalone-desktop\install
 - 📖 **图文安装教程 + 常见问题**：[`standalone-desktop/安装教程.md`](standalone-desktop/安装教程.md)
 - **macOS / Linux**：装好载体程序并运行过一次后，`sh standalone-desktop/install.sh`
 
-> 已实测通过（Windows / v4.2.0）：启动日志 `当前形象: simiao`、`素材加载完成：simiao 22 段动画`，
+> 已实测通过（Windows / v4.4.0）：启动日志 `当前形象: simiao`、`素材加载完成：simiao 22 段动画`，
 > 桌面上出现肆喵并播放待机呼吸；自动下载与静默安装两条路径均已实测。
 
 ### C. 独立桌面版 + DSH 联动（推荐）

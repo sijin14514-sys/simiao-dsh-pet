@@ -68,7 +68,7 @@ function Get-LatestAppInstaller($dir) {
   if (-not $asset) { return $null }
   Say ("  最新版：{0} → {1}（{2:N1} MB）" -f $rel.tag_name, $asset.name, ($asset.size / 1MB))
   $dest = Join-Path $dir $asset.name
-  Say '  下载中，请耐心等待（约 140MB，视网速 1~5 分钟）…'
+  Say '  下载中，请耐心等待（约 280MB，视网速 1~5 分钟）…'
   if (-not (Get-Url $asset.browser_download_url $dest)) { return $null }
   Ok ("已下载：{0}（{1:N1} MB）" -f (Split-Path $dest -Leaf), ((Get-Item $dest).Length / 1MB))
   return $dest
@@ -93,15 +93,27 @@ function Find-InstalledApp {
 }
 
 # ── 工具：无 BOM 写 JSON（带 BOM 会让该程序解析失败并静默退回内置角色）──
-function Set-CharacterInConfig($cfgPath) {
-  $text = [System.IO.File]::ReadAllText($cfgPath)
-  $text = $text.TrimStart([char]0xFEFF)
-  $cfg = $text | ConvertFrom-Json
-  $old = $cfg.character
-  $cfg.character = $CHAR_NAME
-  $json = $cfg | ConvertTo-Json -Depth 20
-  [System.IO.File]::WriteAllText($cfgPath, $json, [System.Text.UTF8Encoding]::new($false))
-  Ok "角色已切换：$old → $CHAR_NAME"
+function Set-CharacterInJson($jsonPath) {
+  $text = ([System.IO.File]::ReadAllText($jsonPath)).TrimStart([char]0xFEFF)
+  $obj = $text | ConvertFrom-Json
+  $old = $obj.character
+  $obj | Add-Member -NotePropertyName character -NotePropertyValue $CHAR_NAME -Force
+  $json = $obj | ConvertTo-Json -Depth 20
+  [System.IO.File]::WriteAllText($jsonPath, $json, [System.Text.UTF8Encoding]::new($false))
+  return $old
+}
+
+function Set-CharacterInConfig($userDataDir) {
+  $cfgPath = Join-Path $userDataDir 'config.json'
+  $slot0Path = Join-Path $userDataDir 'config-slot-0.json'
+  if (Test-Path $slot0Path) {
+    $old = Set-CharacterInJson $slot0Path
+    Ok "角色已切换（config-slot-0.json）：$old → $CHAR_NAME"
+  }
+  $oldCfg = Set-CharacterInJson $cfgPath
+  if (-not (Test-Path $slot0Path)) {
+    Ok "角色已切换：$oldCfg → $CHAR_NAME"
+  }
 }
 
 function Enable-Autostart($exe, $exeDir, $appDirName) {
@@ -123,8 +135,8 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
   $phrPath = Join-Path $talkDir 'simiao-phrases.json'
   if (Test-Path $phrPath) {
     $phrText = ([System.IO.File]::ReadAllText($phrPath)).TrimStart([char]0xFEFF)
-    $cfg.dialogue_mode = 'custom'
-    $cfg.dialogue_phrases = $phrText | ConvertFrom-Json
+    $cfg | Add-Member -NotePropertyName dialogue_mode -NotePropertyValue 'custom' -Force
+    $cfg | Add-Member -NotePropertyName dialogue_phrases -NotePropertyValue ($phrText | ConvertFrom-Json) -Force
   }
 
   if (-not $cfg.agent_link) { $cfg | Add-Member -NotePropertyName agent_link -NotePropertyValue ([pscustomobject]@{}) -Force }
@@ -134,13 +146,27 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
   }) -Force
   $cfg.agent_link | Add-Member -NotePropertyName notify_activity -NotePropertyValue $true -Force
 
-  $cfg | Add-Member -NotePropertyName self_talk_enabled -NotePropertyValue $true -Force
-  $cfg | Add-Member -NotePropertyName self_talk_min_interval -NotePropertyValue 8.0 -Force
-  $cfg | Add-Member -NotePropertyName self_talk_max_interval -NotePropertyValue 18.0 -Force
-  $cfg | Add-Member -NotePropertyName self_talk_duration_seconds -NotePropertyValue 4.0 -Force
+  # v4.4.0+ 功能模块化：新装默认纯核心（enabled=[]），需确保 agent_link 在启用列表里
+  if ($cfg.feature_activation -and ($cfg.feature_activation.enabled -is [System.Collections.IList])) {
+    if ('agent_link' -notin $cfg.feature_activation.enabled) {
+      $cfg.feature_activation.enabled = @($cfg.feature_activation.enabled) + 'agent_link'
+    }
+  }
+
+  # v4.3.0+ 将自言自语等单宠配置迁入 config-slot-0.json；旧版仍在 config.json
+  $slot0Path = Join-Path $userDataDir 'config-slot-0.json'
+  $talkTarget = if (Test-Path $slot0Path) {
+    (([System.IO.File]::ReadAllText($slot0Path)).TrimStart([char]0xFEFF)) | ConvertFrom-Json
+  } else {
+    $cfg
+  }
+  $talkTarget | Add-Member -NotePropertyName self_talk_enabled -NotePropertyValue $true -Force
+  $talkTarget | Add-Member -NotePropertyName self_talk_min_interval -NotePropertyValue 8.0 -Force
+  $talkTarget | Add-Member -NotePropertyName self_talk_max_interval -NotePropertyValue 18.0 -Force
+  $talkTarget | Add-Member -NotePropertyName self_talk_duration_seconds -NotePropertyValue 4.0 -Force
   # 空目录 = 纯文字气泡（程序源码 _resolve_self_talk_image_dir：空即不带配图）
-  $cfg | Add-Member -NotePropertyName self_talk_image_dir -NotePropertyValue '' -Force
-  $cfg | Add-Member -NotePropertyName self_talk_texts -NotePropertyValue @(
+  $talkTarget | Add-Member -NotePropertyName self_talk_image_dir -NotePropertyValue '' -Force
+  $talkTarget | Add-Member -NotePropertyName self_talk_texts -NotePropertyValue @(
     '主人喵～肆喵在这儿守着喵，放心忙吧喵。',
     '要不要喝口水呀喵？肆喵帮您看着屏幕喵。',
     '唔喵…眼镜又滑下来了喵，推一下喵。',
@@ -150,6 +176,11 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
     '刚才那个文件改好了吗喵？肆喵有点好奇喵。',
     '偷偷告诉主人喵：肆喵觉得您挺厉害的喵！'
   ) -Force
+
+  if (Test-Path $slot0Path) {
+    $slot0Json = $talkTarget | ConvertTo-Json -Depth 20
+    [System.IO.File]::WriteAllText($slot0Path, $slot0Json, [System.Text.UTF8Encoding]::new($false))
+  }
 
   $json = $cfg | ConvertTo-Json -Depth 30
   [System.IO.File]::WriteAllText($cfgPath, $json, [System.Text.UTF8Encoding]::new($false))
@@ -253,7 +284,7 @@ Ok "角色已就位：$charDst（$n 段动画）"
 
 Step 4 '切换当前角色为「肆喵」'
 Copy-Item $cfgPath "$cfgPath.bak" -Force -ErrorAction SilentlyContinue
-Set-CharacterInConfig $cfgPath
+Set-CharacterInConfig $userDataDir
 
 # ── ④ 让她会说话 ───────────────────────────────────────────────────────
 if (-not $SkipTalk) {

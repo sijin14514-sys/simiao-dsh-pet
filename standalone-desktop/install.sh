@@ -76,13 +76,29 @@ al['report_gates'] = {'state': 1.0, 'activity': 1.0, 'approval': 1.0, 'done': 1.
                       'exec_failed': 1.0, 'model_access': 1.0, 'stuck': 1.0, 'bridge': 1.0}
 al['notify_activity'] = True
 
-cfg['self_talk_enabled'] = True
-cfg['self_talk_min_interval'] = 8.0
-cfg['self_talk_max_interval'] = 18.0
-cfg['self_talk_duration_seconds'] = 4.0
+# v4.4.0+ 功能模块化：新装默认纯核心（enabled=[]），需确保 agent_link 在启用列表里
+fa = cfg.get('feature_activation')
+if isinstance(fa, dict) and isinstance(fa.get('enabled'), list):
+    if 'agent_link' not in fa['enabled']:
+        fa['enabled'].append('agent_link')
+
+slot0_path = os.path.join(user_dir, 'config-slot-0.json')
+talk_target = cfg
+slot0 = None
+if os.path.isfile(slot0_path):
+    with open(slot0_path, encoding='utf-8-sig') as f:
+        slot0 = json.load(f)
+    old = slot0.get('character')
+    slot0['character'] = 'simiao'
+    talk_target = slot0
+
+talk_target['self_talk_enabled'] = True
+talk_target['self_talk_min_interval'] = 8.0
+talk_target['self_talk_max_interval'] = 18.0
+talk_target['self_talk_duration_seconds'] = 4.0
 # 空目录 = 纯文字气泡（程序源码约定：空即不带配图）
-cfg['self_talk_image_dir'] = ''
-cfg['self_talk_texts'] = [
+talk_target['self_talk_image_dir'] = ''
+talk_target['self_talk_texts'] = [
     '主人喵～肆喵在这儿守着喵，放心忙吧喵。',
     '要不要喝口水呀喵？肆喵帮您看着屏幕喵。',
     '唔喵…眼镜又滑下来了喵，推一下喵。',
@@ -92,6 +108,10 @@ cfg['self_talk_texts'] = [
     '刚才那个文件改好了吗喵？肆喵有点好奇喵。',
     '偷偷告诉主人喵：肆喵觉得您挺厉害的喵！',
 ]
+
+if slot0 is not None:
+    with open(slot0_path, 'w', encoding='utf-8') as f:
+        json.dump(slot0, f, ensure_ascii=False, indent=2)
 
 with open(cfg_path, 'w', encoding='utf-8') as f:      # 无 BOM
     json.dump(cfg, f, ensure_ascii=False, indent=2)
