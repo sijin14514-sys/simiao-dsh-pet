@@ -22,7 +22,7 @@ case "$(uname -s)" in
 esac
 
 FOUND=""
-for name in dsh-pet-standalone-webm dsh-pet-standalone; do
+for name in dsh-pet-standalone-webm-chat dsh-pet-standalone-webm dsh-pet-standalone; do
   if [ -d "$BASE/$name" ]; then FOUND="$BASE/$name"; break; fi
 done
 

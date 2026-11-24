@@ -112,9 +112,11 @@ function Set-CharacterInConfig($userDataDir) {
     $old = Set-CharacterInJson $slot0Path
     Ok "角色已切换（config-slot-0.json）：$old → $CHAR_NAME"
   }
-  $oldCfg = Set-CharacterInJson $cfgPath
-  if (-not (Test-Path $slot0Path)) {
-    Ok "角色已切换：$oldCfg → $CHAR_NAME"
+  if (Test-Path $cfgPath) {
+    $oldCfg = Set-CharacterInJson $cfgPath
+    if (-not (Test-Path $slot0Path)) {
+      Ok "角色已切换：$oldCfg → $CHAR_NAME"
+    }
   }
 }
 
@@ -132,8 +134,11 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
   if (-not (Test-Path $talkDir)) { Warn "跳过说话配置（找不到 $talkDir）"; return }
 
   $cfgPath = Join-Path $userDataDir 'config.json'
-  $text = ([System.IO.File]::ReadAllText($cfgPath)).TrimStart([char]0xFEFF)
-  $cfg = $text | ConvertFrom-Json
+  $cfg = if (Test-Path $cfgPath) {
+    (([System.IO.File]::ReadAllText($cfgPath)).TrimStart([char]0xFEFF)) | ConvertFrom-Json
+  } else {
+    [pscustomobject]@{}
+  }
 
   $phrPath = Join-Path $talkDir 'simiao-phrases.json'
   if (Test-Path $phrPath) {
@@ -158,10 +163,16 @@ function Enable-SimiaoTalk($userDataDir, $talkDir) {
   }) -Force
   $cfg.agent_link | Add-Member -NotePropertyName notify_activity -NotePropertyValue $true -Force
 
-  # v4.4.0+ 功能模块化：新装默认纯核心（enabled=[]），需确保 agent_link 在启用列表里
-  if ($cfg.feature_activation -and ($cfg.feature_activation.enabled -is [System.Collections.IList])) {
-    if ('agent_link' -notin $cfg.feature_activation.enabled) {
-      $cfg.feature_activation.enabled = @($cfg.feature_activation.enabled) + 'agent_link'
+  # v4.4.0+ 功能模块化：新装默认纯核心（enabled=[]），需确保 agent_link 与 chat 在启用列表里
+  if (-not $cfg.feature_activation -and (Test-Path (Join-Path $userDataDir 'config-slot-0.json'))) {
+    $cfg | Add-Member -NotePropertyName feature_activation -NotePropertyValue ([pscustomobject]@{
+      version = 1; enabled = @('agent_link', 'chat')
+    }) -Force
+  } elseif ($cfg.feature_activation -and ($cfg.feature_activation.enabled -is [System.Collections.IList])) {
+    foreach ($fid in @('agent_link', 'chat')) {
+      if ($fid -notin $cfg.feature_activation.enabled) {
+        $cfg.feature_activation.enabled = @($cfg.feature_activation.enabled) + $fid
+      }
     }
   }
 
@@ -264,18 +275,19 @@ if (-not $SkipAppInstall) {
 
 $exe = $app.Exe
 $exeDir = $app.Dir
-$appDirName = $app.AppDirName
-$userDataDir = Join-Path $env:APPDATA $appDirName        # 该程序的用户数据目录（与安装目录同名）
+$appDirName = [System.IO.Path]::GetFileNameWithoutExtension($exe)
+$userDataDir = Join-Path $env:APPDATA $appDirName        # 该程序的用户数据目录（与 exe 同名）
 $cfgPath = Join-Path $userDataDir 'config.json'
+$slot0Path = Join-Path $userDataDir 'config-slot-0.json'
 
 # ── ② 让程序生成配置 ───────────────────────────────────────────────────
 Step 2 '准备程序配置'
 $running = Get-Process -Name ($appDirName) -ErrorAction SilentlyContinue
-if (-not (Test-Path $cfgPath)) {
+if (-not (Test-Path $cfgPath) -and -not (Test-Path $slot0Path)) {
   Say '  首次使用：先启动一次程序以生成配置…'
   if (-not $running) { Start-Process -FilePath $exe -WorkingDirectory $exeDir | Out-Null }
-  for ($i = 0; $i -lt 30 -and -not (Test-Path $cfgPath); $i++) { Start-Sleep -Seconds 2 }
-  if (-not (Test-Path $cfgPath)) {
+  for ($i = 0; $i -lt 30 -and -not (Test-Path $cfgPath) -and -not (Test-Path $slot0Path); $i++) { Start-Sleep -Seconds 2 }
+  if (-not (Test-Path $cfgPath) -and -not (Test-Path $slot0Path)) {
     Say "  ✗ 等不到配置文件：$cfgPath" 'Red'
     Say '    请手动打开一次桌宠程序，然后重新运行本脚本。' 'Red'
     Read-Host '按回车退出'
@@ -283,7 +295,7 @@ if (-not (Test-Path $cfgPath)) {
   }
   Ok '配置已生成'
 } else {
-  Ok "配置已存在：$cfgPath"
+  Ok "配置已存在：$userDataDir"
 }
 
 # ── ③ 装角色 ───────────────────────────────────────────────────────────
@@ -296,7 +308,7 @@ $n = (Get-ChildItem (Join-Path $charDst 'videos') -Recurse -Filter *.webm -Error
 Ok "角色已就位：$charDst（$n 段动画）"
 
 Step 4 '切换当前角色为「肆喵」'
-Copy-Item $cfgPath "$cfgPath.bak" -Force -ErrorAction SilentlyContinue
+if (Test-Path $cfgPath) { Copy-Item $cfgPath "$cfgPath.bak" -Force -ErrorAction SilentlyContinue }
 Set-CharacterInConfig $userDataDir
 
 # ── ④ 让她会说话 ───────────────────────────────────────────────────────
