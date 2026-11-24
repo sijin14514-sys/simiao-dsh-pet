@@ -30,7 +30,7 @@ $ProgressPreference = 'Continue'
 
 # ── 常量 ────────────────────────────────────────────────────────────────
 $APP_REPO = 'MerZlin/dsh-pet-indesktop'      # 独立桌宠程序（载体）
-$APP_ASSET_PATTERN = 'webm-setup\.exe$'      # 选 WebM 变体的安装包
+$APP_ASSET_PATTERN = 'webm-chat-setup\.exe$' # 选 WebM + AI 对话版安装包
 $CHAR_NAME = 'simiao'
 $CHAR_DIR_NAME = 'simiao'
 $SRC_CHAR = Join-Path $PSScriptRoot 'characters\simiao'
@@ -84,7 +84,9 @@ function Find-InstalledApp {
   foreach ($root in $roots) {
     $hit = Get-ChildItem $root -Directory -Filter 'dsh-pet-standalone*' -ErrorAction SilentlyContinue | ForEach-Object {
       $exe = Get-ChildItem $_.FullName -Filter '*.exe' -ErrorAction SilentlyContinue |
-        Where-Object { $_.Name -notlike 'unins*' -and $_.Name -like 'dsh-pet-standalone*' } | Select-Object -First 1
+        Where-Object { $_.Name -notlike 'unins*' -and $_.Name -like 'dsh-pet-standalone*' } |
+        Sort-Object { if ($_.Name -like '*-chat.exe') { 0 } else { 1 } }, Name |
+        Select-Object -First 1
       if ($exe) { [pscustomobject]@{ Exe = $exe.FullName; Dir = $_.FullName; AppDirName = $_.Name } }
     }
     if ($hit) { return $hit | Select-Object -First 1 }
@@ -117,7 +119,8 @@ function Set-CharacterInConfig($userDataDir) {
 }
 
 function Enable-Autostart($exe, $exeDir, $appDirName) {
-  $cmd = "cmd /c start `"`" /D `"$exeDir`" `"$exe`" --slot 0"
+  # PET_FRAMESEQ=0：跳过 v4.4.0 的白底反解帧序列转码，避免绿幕抠像素材出现雪花噪点
+  $cmd = "cmd /c set PET_FRAMESEQ=0&& start `"`" /D `"$exeDir`" `"$exe`" --slot 0"
   Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name $appDirName -Value $cmd
   $read = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name $appDirName).$appDirName
   if ($read -eq $cmd) { Ok '已开启开机自启（可在桌宠右键菜单里关闭）' } else { Warn '开机自启写入后校验不一致' }
@@ -234,7 +237,7 @@ if (-not $SkipAppInstall) {
       Say ''
       Say '  ✗ 自动下载失败（可能是网络/代理原因）。请手动完成这一步：' 'Red'
       Say "    1. 打开 https://github.com/$APP_REPO/releases/latest" 'Red'
-      Say '    2. 下载文件名以「-webm-setup.exe」结尾的安装包，双击装好' 'Red'
+      Say '    2. 下载文件名以「-webm-chat-setup.exe」结尾的安装包，双击装好' 'Red'
       Say '    3. 重新运行本脚本即可' 'Red'
       Read-Host '按回车退出'
       exit 1
@@ -287,6 +290,7 @@ if (-not (Test-Path $cfgPath)) {
 Step 3 '安装肆喵角色素材'
 $charDst = Join-Path $userDataDir "characters\$CHAR_DIR_NAME"
 New-Item -ItemType Directory -Force -Path $charDst | Out-Null
+Remove-Item (Join-Path $charDst 'frameseq') -Recurse -Force -ErrorAction SilentlyContinue
 Copy-Item (Join-Path $SRC_CHAR '*') $charDst -Recurse -Force
 $n = (Get-ChildItem (Join-Path $charDst 'videos') -Recurse -Filter *.webm -ErrorAction SilentlyContinue | Measure-Object).Count
 Ok "角色已就位：$charDst（$n 段动画）"
@@ -312,6 +316,7 @@ Step 7 '启动桌宠'
 Get-Process -Name $appDirName -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 4
 if (-not $NoLaunch) {
+  $env:PET_FRAMESEQ = '0'
   Start-Process -FilePath $exe -WorkingDirectory $exeDir | Out-Null
   Start-Sleep -Seconds 8
   if (Get-Process -Name $appDirName -ErrorAction SilentlyContinue) { Ok '桌宠已启动，看你的桌面右下角 🐾' }
