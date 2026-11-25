@@ -122,6 +122,8 @@ function Set-CharacterInConfig($userDataDir) {
 
 function Enable-Autostart($exe, $exeDir, $appDirName) {
   # PET_FRAMESEQ=0：跳过 v4.4.0 的白底反解帧序列转码，避免绿幕抠像素材出现雪花噪点
+  [Environment]::SetEnvironmentVariable('PET_FRAMESEQ', '0', 'User')
+  $env:PET_FRAMESEQ = '0'
   $cmd = "cmd /c set PET_FRAMESEQ=0&& start `"`" /D `"$exeDir`" `"$exe`" --slot 0"
   Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name $appDirName -Value $cmd
   $read = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name $appDirName).$appDirName
